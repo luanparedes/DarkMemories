@@ -70,6 +70,9 @@ Saved/*
 # Compiled source files for the engine to use
 Intermediate/*
 Plugins/**/Intermediate/*
+Content/Fab/*
+Content/Textures/*
+Content/Survival_Character/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
