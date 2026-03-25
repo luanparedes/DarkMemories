@@ -8,10 +8,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
-// Sets default values
 AMainCharacter::AMainCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
@@ -21,7 +19,6 @@ AMainCharacter::AMainCharacter()
 	CameraComp->SetupAttachment(CameraBoom);
 }
 
-// Called when the game starts or when spawned
 void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -51,10 +48,12 @@ void AMainCharacter::Move(const FInputActionValue& Value)
 
 void AMainCharacter::Look(const FInputActionValue& Value)
 {
-	if (const bool currentValue = Value.Get<bool>())
+	const FVector2D LookAxis = Value.Get<FVector2D>();
+
+	if (GetController())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Looking"));
-		//MoveForward(FVector(12.f, 14.f, 18.f));
+		AddControllerYawInput(LookAxis.X);
+		AddControllerPitchInput(LookAxis.Y);
 	}
 }
 
@@ -64,39 +63,23 @@ void AMainCharacter::Jump(const FInputActionValue& Value)
 	if (const bool currentValue = Value.Get<bool>())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Jumping"));
-		//MoveForward(FVector(12.f, 14.f, 18.f));
 	}
 }
 
 void AMainCharacter::JumpEnd(const FInputActionValue& Value)
 {
-	//IsJumping = false;
 	if (const bool currentValue = Value.Get<bool>())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EndJump"));
-		//MoveForward(FVector(12.f, 14.f, 18.f));
 	}
 }
 
-void AMainCharacter::MoveForward(float value)
-{
-	if (GetController() && value != 0.f)
-	{
-		FVector forward = GetActorForwardVector();
-		AddMovementInput(forward, value);
-
-		UE_LOG(LogTemp, Warning, TEXT("Andou para a frente!"));
-	}
-}
-
-// Called every frame
 void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-// Called to bind functionality to input
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -108,6 +91,5 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		enhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AMainCharacter::Jump);
 		enhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AMainCharacter::JumpEnd);
 	}
-	//PlayerInputComponent->BindAxis(FName("MoveForward"), this, &AMainCharacter::MoveForward);
 }
 
