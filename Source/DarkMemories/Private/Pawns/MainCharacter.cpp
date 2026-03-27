@@ -35,43 +35,38 @@ void AMainCharacter::BeginPlay()
 
 void AMainCharacter::Move(const FInputActionValue& Value)
 {
-	const float DirectionValue = Value.Get<float>();
+	const FVector2D movementVector = Value.Get<FVector2D>();
 	
-	if (GetController() && (DirectionValue != 0.f))
-	{
-		FVector forward = GetActorForwardVector();
-		AddMovementInput(forward, DirectionValue);
+	const FRotator rotation = Controller->GetControlRotation();
+	const FRotator YawRotation(0.f, rotation.Yaw, 0.f);
 
-		UE_LOG(LogTemp, Warning, TEXT("Andou para a frente!"));
-	}
+	const FVector forwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FVector rightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	AddMovementInput(forwardDirection, movementVector.Y);
+	AddMovementInput(rightDirection, movementVector.X);
 }
 
 void AMainCharacter::Look(const FInputActionValue& Value)
 {
-	const FVector2D LookAxis = Value.Get<FVector2D>();
+	const FVector2D lookAxisVector = Value.Get<FVector2D>();
 
-	if (GetController())
-	{
-		AddControllerYawInput(LookAxis.X);
-		AddControllerPitchInput(LookAxis.Y);
-	}
+	AddControllerPitchInput(lookAxisVector.Y);
+	AddControllerYawInput(lookAxisVector.X);
 }
 
-void AMainCharacter::Jump(const FInputActionValue& Value)
+void AMainCharacter::EKeyPressed(const FInputActionValue& Value)
 {
-	//IsJumping = true;
-	if (const bool currentValue = Value.Get<bool>())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Jumping"));
-	}
+
 }
 
-void AMainCharacter::JumpEnd(const FInputActionValue& Value)
+void AMainCharacter::Attack(const FInputActionValue & Value)
 {
-	if (const bool currentValue = Value.Get<bool>())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("EndJump"));
-	}
+
+}
+
+void AMainCharacter::Dodge(const FInputActionValue & Value)
+{
+
 }
 
 void AMainCharacter::Tick(float DeltaTime)
@@ -88,8 +83,10 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	{
 		enhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMainCharacter::Move);
 		enhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMainCharacter::Look);
-		enhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AMainCharacter::Jump);
-		enhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AMainCharacter::JumpEnd);
+		enhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AMainCharacter::Jump);
+		enhancedInputComponent->BindAction(EKeyAction, ETriggerEvent::Triggered, this, &AMainCharacter::EKeyPressed);
+		enhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AMainCharacter::Attack);
+		enhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &AMainCharacter::Dodge);
 	}
 }
 
