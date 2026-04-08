@@ -27,8 +27,9 @@ protected:
 	virtual void BeginPlay() override;
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
-	void Jump(const FInputActionValue& Value);
-	void JumpEnd(const FInputActionValue& Value);
+	void EKeyPressed(const FInputActionValue& Value);
+	void Attack(const FInputActionValue& Value);
+	void Dodge(const FInputActionValue& Value);
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -48,4 +49,13 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* JumpAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* EKeyAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* AttackAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* DodgeAction;
 };
